@@ -1,0 +1,5 @@
+.btn-wrapper {
+  display: grid;
+  grid-template-columns: 10px max-content 10px;
+  grid-template-rows: 10px max-content 10px;
+}

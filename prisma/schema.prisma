@@ -1,0 +1,166 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id                     String                  @id @default(cuid())
+  name                   String?
+  email                  String?                 @unique
+  emailVerified          DateTime?
+  image                  String?
+  accounts               Account[]
+  sessions               Session[]
+  started_certificates   Started_certificate[]
+  completed_certificates Completed_certificate[]
+  started_courses        Started_course[]
+  completed_courses      Completed_course[]
+  started_exercises      Started_exercise[]
+  completed_exercises    Completed_exercise[]
+  completed_tasks        Completed_task[]
+}
+
+model Certificate {
+  id                      Int                    @id @default(autoincrement())
+  type                    String
+  title                   String
+  short_description       String
+  long_description        String
+  course                  Course[]
+  exercise                Exercise[]
+  Started_certificate     Started_certificate?   @relation(fields: [started_certificateId], references: [id])
+  started_certificateId   Int?
+  Completed_certificate   Completed_certificate? @relation(fields: [completed_certificateId], references: [id])
+  completed_certificateId Int?
+}
+
+model Started_certificate {
+  id           Int           @id @default(autoincrement())
+  user         User          @relation(fields: [userId], references: [id])
+  certificates Certificate[]
+  userId       String
+}
+
+model Completed_certificate {
+  id           Int           @id @default(autoincrement())
+  user         User          @relation(fields: [userId], references: [id])
+  certificates Certificate[]
+  userId       String
+}
+
+model Started_course {
+  id      Int      @id @default(autoincrement())
+  user    User     @relation(fields: [userId], references: [id])
+  courses Course[]
+  userId  String
+}
+
+model Completed_course {
+  id      Int      @id @default(autoincrement())
+  user    User     @relation(fields: [userId], references: [id])
+  courses Course[]
+  userId  String
+}
+
+model Started_exercise {
+  id        Int        @id @default(autoincrement())
+  user      User       @relation(fields: [userId], references: [id])
+  exercises Exercise[]
+  userId    String
+}
+
+model Completed_exercise {
+  id        Int        @id @default(autoincrement())
+  user      User       @relation(fields: [userId], references: [id])
+  exercises Exercise[]
+  userId    String
+}
+
+model Completed_task {
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id])
+  tasks  Task[]
+  userId String
+}
+
+model Course {
+  id                 Int               @id @default(autoincrement())
+  title              String
+  description        String
+  module             String
+  certificate        Certificate       @relation(fields: [certificateId], references: [id])
+  certificateId      Int
+  Started_course     Started_course?   @relation(fields: [started_courseId], references: [id])
+  started_courseId   Int?
+  Completed_course   Completed_course? @relation(fields: [completed_courseId], references: [id])
+  completed_courseId Int?
+}
+
+model Lesson {
+  id Int @id @default(autoincrement())
+}
+
+model Exercise {
+  id                   Int                 @id @default(autoincrement())
+  title                String
+  description          String
+  difficulty           String
+  certificate          Certificate         @relation(fields: [certificateId], references: [id])
+  certificateId        Int
+  tasks                Task[]
+  Started_exercise     Started_exercise?   @relation(fields: [started_exerciseId], references: [id])
+  started_exerciseId   Int?
+  Completed_exercise   Completed_exercise? @relation(fields: [completed_exerciseId], references: [id])
+  completed_exerciseId Int?
+}
+
+model Task {
+  id               Int             @id @default(autoincrement())
+  todo             String
+  exercise         Exercise        @relation(fields: [exerciseId], references: [id])
+  exerciseId       Int
+  Completed_task   Completed_task? @relation(fields: [completed_taskId], references: [id])
+  completed_taskId Int?
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
