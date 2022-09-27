@@ -6,27 +6,15 @@ import Sidebar from "./sidebar";
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
-  if (router.pathname === "/login" || router.pathname === "/welcome") {
-    return <main>{children}</main>;
-  }
   return (
     <div
       className={[
-        "h-screen bg-[#27236B]",
-        "grid grid-rows-[max-content_1fr]",
-        "grid-cols-1 md:grid-cols-[max-content_1fr]",
+        "h-screen grid md:grid-cols-[max-content_1fr]",
+        "bg-[#2B3664]",
       ].join(" ")}
     >
-      <Navbar className='row-span-1 col-span-2' />
-      <Sidebar
-        className={["row-start-2 col-start-1", "hidden md:block"].join(" ")}
-      />
-      <main
-        className={[
-          "md:col-start-2 col-span-1 row-start-2 row-span-1",
-          " h-full overflow-y-scroll",
-        ].join(" ")}
-      >
+      <Navbar className=' px-3 py-3 md:px-0 md:py-0 md:col-span-1' />
+      <main className={["h-full overflow-y-scroll md:col-span-1"].join(" ")}>
         {children}
       </main>
     </div>

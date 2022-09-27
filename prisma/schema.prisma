@@ -41,6 +41,19 @@ model Certificate {
   completed_certificateId Int?
 }
 
+model Content {
+  id      Int       @id @default(autoincrement())
+  text    String
+  outline Outline[]
+}
+
+model Outline {
+  id        Int      @id @default(autoincrement())
+  text      String
+  Content   Content? @relation(fields: [contentId], references: [id])
+  contentId Int?
+}
+
 model Started_certificate {
   id           Int           @id @default(autoincrement())
   user         User          @relation(fields: [userId], references: [id])

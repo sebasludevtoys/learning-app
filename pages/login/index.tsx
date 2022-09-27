@@ -64,3 +64,5 @@ export async function getServerSideProps(context: any) {
     },
   };
 }
+
+Page.authPage = true;
